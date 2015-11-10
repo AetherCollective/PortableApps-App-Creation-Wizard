@@ -8,7 +8,7 @@ FileInstall("iconsext.exe", "iconsext.exe", "0")
 #include <GUIConstantsEx.au3>
 #include <StaticConstants.au3>
 #include <WindowsConstants.au3>
-Global $path = @ScriptDir & "\PortableApps\"
+Global $path = StringTrimright(@ScriptDir,StringLen(@ScriptDir)-2) & "\PortableApps\"
 Global $PortableAppsLauncherCreatorPath = $path & "PortableApps.comLauncher\PortableApps.comLauncherGenerator.exe"
 Global Const $wintitle = "PortableApps App Creation Wizard"
 CheckGenerator()
@@ -30,7 +30,15 @@ Do
 	Global $appname = InputBox($wintitle, "What is the app name?")
 	If @error Then Exit
 Until $appname
+If StringInStr($appname, "portable") Then
+	$appnameportable = $appname
+Else
+	$appnameportable = $appname & " Portable"
+
+EndIf
+ConsoleWrite($appnameportable)
 CreateApp()
+
 Func CreateApp()
 	;Step 1. Create Directories.
 	DirCreate($path)
@@ -45,17 +53,12 @@ Func CreateApp()
 	DirCreate($path & $appname & "\Other\Help")
 	DirCreate($path & $appname & "\Other\Help\Images")
 	DirCreate($path & $appname & "\Other\Source\")
-	MsgBox(0, $wintitle, "Project Folders Created. Please move the PortableApp into the Project Folder at " & @CRLF & $path & $appname & "\" & $appname & @CRLF & @CRLF & "An icon will be extracted automatically if the ProgramExecutable exists upon submission. Otherwise, you will also want to make/extract the icon at this time. ")
+	MsgBox(0, $wintitle, "Project Folders Created. Please move the PortableApp into the Project Folder at " & @CRLF & $path & $appname & "\App\" & $appname & @CRLF & @CRLF & "An icon will be extracted automatically if the ProgramExecutable exists upon submission. Otherwise, you will also want to make/extract the icon at this time. ")
 	;Step 2. Collect appinfo from user.
 	#Region ### START Koda GUI section ### Form=D:\OneDrive\Documents\PortableApp_Creator.kxf
 	$PortableApp_Creator = GUICreate($wintitle, 505, 675, -1, -1)
 	$Group1 = GUICtrlCreateGroup("Details", 0, 0, 505, 161)
 	$AppID = GUICtrlCreateLabel("AppID", 8, 16, 34, 17)
-	If Not StringInStr($appname, "portable") Then
-		$appnameportable = $appname & "Portable"
-	Else
-		$appnameportable = $appname
-	EndIf
 	$AppIDInput = GUICtrlCreateInput($appnameportable, 48, 16, 65, 21)
 	$Publisher = GUICtrlCreateLabel("Publisher", 120, 16, 47, 17)
 	$PublisherInput = GUICtrlCreateInput("", 168, 16, 161, 21)
@@ -102,7 +105,7 @@ Func CreateApp()
 	$DotNetVersion = GUICtrlCreateLabel("UsesDotNetVersion", 256, 256, 73, 17)
 	$Group5 = GUICtrlCreateGroup("Control", 0, 280, 505, 89)
 	$ControlInput = GUICtrlCreateEdit("", 0, 296, 505, 73)
-	GUICtrlSetData(-1, StringFormat("Icons=1\r\nStart=" & String($appname) & "Portable.exe\r\nExtractIcon=App\\" & String($appname) & "\\" & String($appname) & ".exe"))
+	GUICtrlSetData(-1, StringFormat("Icons=1\r\nStart=" & GUICtrlRead($AppIDInput) & ".exe\r\nExtractIcon=App\\" & String($appname) & "\\" & String($appname) & ".exe"))
 	$Group6 = GUICtrlCreateGroup("Associations", 0, 368, 505, 177)
 	$AssociationsInput = GUICtrlCreateEdit("", 0, 384, 505, 161)
 	GUICtrlSetData(-1, StringFormat("FileTypes=\r\nFileTypeCommandLine=\r\nFileTypeCommandLine-extension=\r\nProtocols=\r\nProtocolCommandLine=\r\nProtocolCommandLine-protocol=\r\nSendTo=\r\nSendToCommandLine=\r\nShell=\r\nShellCommand="))
@@ -211,7 +214,7 @@ Func CreateApp()
 	$RegistryMove = GUICtrlCreateGroup("RegistryMove", 0, 412, 505, 81)
 	$RegistryMoveInput = GUICtrlCreateEdit("", 0, 428, 505, 73)
 	GUICtrlSetData(-1, "")
-	$Submit = GUICtrlCreateButton("Submit", 0,502, 505, 22)
+	$Submit = GUICtrlCreateButton("Submit", 0, 502, 505, 22)
 	GUISetState(@SW_SHOW)
 	#EndRegion ### END Koda GUI section ###
 	While 1
@@ -228,7 +231,7 @@ Func CreateApp()
 	Local $ininametemp = StringSplit(GUICtrlRead($ProgramExecutableInput), "\")
 	Local $ininame = $ininametemp[$ininametemp[0]]
 	$ininame = StringReplace($ininame, ".exe", "")
-	Local $launcherinfopath = $path & $appname & "\App\AppInfo\Launcher\" & $ininame & "Portable.ini"
+	Local $launcherinfopath = $path & $appname & "\App\AppInfo\Launcher\" & $ininame & " Portable.ini"
 	IniWrite($launcherinfopath, "Launch", "Name", $appnameportable)
 	IniWrite($launcherinfopath, "Launch", "ProgramExecutable", GUICtrlRead($ProgramExecutableInput))
 	IniWrite($launcherinfopath, "Launch", "ProgramExecutable64", GUICtrlRead($ProgramExecutable64Input))
