@@ -1,14 +1,17 @@
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
+#AutoIt3Wrapper_Icon=C:\PortableApps\PortableApps.com\App\Graphics\usb_old.ico
+#AutoIt3Wrapper_Outfile=C:\PortableApps\PortableApps App Creation Wizard.exe
 #AutoIt3Wrapper_UseUpx=y
+#AutoIt3Wrapper_UseX64=n
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
-FileInstall("iconsext.exe", "iconsext.exe", "0")
+#include "array.au3"
 #include <ButtonConstants.au3>
 #include <ComboConstants.au3>
 #include <EditConstants.au3>
 #include <GUIConstantsEx.au3>
 #include <StaticConstants.au3>
 #include <WindowsConstants.au3>
-Global $path = StringTrimright(@ScriptDir,StringLen(@ScriptDir)-2) & "\PortableApps\"
+Global $path = StringTrimRight(@ScriptDir, StringLen(@ScriptDir) - 2) & "\PortableApps\"
 Global $PortableAppsLauncherCreatorPath = $path & "PortableApps.comLauncher\PortableApps.comLauncherGenerator.exe"
 Global Const $wintitle = "PortableApps App Creation Wizard"
 CheckGenerator()
@@ -23,37 +26,36 @@ Func CheckGenerator()
 				CheckGenerator()
 			Case $warningReply = 5
 		EndSelect
-
 	EndIf
 EndFunc   ;==>CheckGenerator
 Do
 	Global $appname = InputBox($wintitle, "What is the app name?")
 	If @error Then Exit
 Until $appname
-If StringInStr($appname, "portable") Then
-	$appnameportable = $appname
+If StringInStr($appname, "Portable") Then
+	$appnameportable = StringReplace($appname, " ", "")
 Else
-	$appnameportable = $appname & " Portable"
-
+	$appnameportable = StringReplace($appname, " ", "") & "Portable"
 EndIf
-ConsoleWrite($appnameportable)
-CreateApp()
 
+CreateApp()
 Func CreateApp()
 	;Step 1. Create Directories.
 	DirCreate($path)
-	DirCreate($path & $appname)
-	DirCreate($path & $appname & "\App")
-	DirCreate($path & $appname & "\App\AppInfo")
-	DirCreate($path & $appname & "\App\AppInfo\Launcher")
-	DirCreate($path & $appname & "\App\" & $appname)
-	DirCreate($path & $appname & "\App\DefaultData")
-	DirCreate($path & $appname & "\Data")
-	DirCreate($path & $appname & "\Other")
-	DirCreate($path & $appname & "\Other\Help")
-	DirCreate($path & $appname & "\Other\Help\Images")
-	DirCreate($path & $appname & "\Other\Source\")
-	MsgBox(0, $wintitle, "Project Folders Created. Please move the PortableApp into the Project Folder at " & @CRLF & $path & $appname & "\App\" & $appname & @CRLF & @CRLF & "An icon will be extracted automatically if the ProgramExecutable exists upon submission. Otherwise, you will also want to make/extract the icon at this time. ")
+	DirCreate($path & $appnameportable)
+	DirCreate($path & $appnameportable & "\App")
+	DirCreate($path & $appnameportable & "\App\AppInfo")
+	DirCreate($path & $appnameportable & "\App\AppInfo\Launcher")
+	DirCreate($path & $appnameportable & "\App\" & $appname)
+	DirCreate($path & $appnameportable & "\App\DefaultData")
+	DirCreate($path & $appnameportable & "\Data")
+	DirCreate($path & $appnameportable & "\Other")
+	DirCreate($path & $appnameportable & "\Other\Help")
+	DirCreate($path & $appnameportable & "\Other\Help\Images")
+	DirCreate($path & $appnameportable & "\Other\Source\")
+	MsgBox(0, $wintitle, "Project Folders Created. Please move the PortableApp into the Project Folder at " & @CRLF & $path & $appnameportable & "\App\" & $appname & @CRLF & @CRLF & "An icon will be extracted automatically if the ProgramExecutable exists upon submission. Otherwise, you will also want to make/extract the icon at this time. ")
+
+
 	;Step 2. Collect appinfo from user.
 	#Region ### START Koda GUI section ### Form=D:\OneDrive\Documents\PortableApp_Creator.kxf
 	$PortableApp_Creator = GUICreate($wintitle, 505, 675, -1, -1)
@@ -105,7 +107,7 @@ Func CreateApp()
 	$DotNetVersion = GUICtrlCreateLabel("UsesDotNetVersion", 256, 256, 73, 17)
 	$Group5 = GUICtrlCreateGroup("Control", 0, 280, 505, 89)
 	$ControlInput = GUICtrlCreateEdit("", 0, 296, 505, 73)
-	GUICtrlSetData(-1, StringFormat("Icons=1\r\nStart=" & GUICtrlRead($AppIDInput) & ".exe\r\nExtractIcon=App\\" & String($appname) & "\\" & String($appname) & ".exe"))
+	GUICtrlSetData(-1, StringFormat("Icons=1\r\nStart=" & GUICtrlRead($AppIDInput) & ".exe"))
 	$Group6 = GUICtrlCreateGroup("Associations", 0, 368, 505, 177)
 	$AssociationsInput = GUICtrlCreateEdit("", 0, 384, 505, 161)
 	GUICtrlSetData(-1, StringFormat("FileTypes=\r\nFileTypeCommandLine=\r\nFileTypeCommandLine-extension=\r\nProtocols=\r\nProtocolCommandLine=\r\nProtocolCommandLine-protocol=\r\nSendTo=\r\nSendToCommandLine=\r\nShell=\r\nShellCommand="))
@@ -126,8 +128,10 @@ Func CreateApp()
 				ExitLoop
 		EndSwitch
 	WEnd
+
+
 	;Step 3. Create appinfo.ini.
-	Local $appinfopath = $path & $appname & "\App\AppInfo\appinfo.ini"
+	Global $appinfopath = $path & $appnameportable & "\App\AppInfo\appinfo.ini"
 	IniWrite($appinfopath, "Format", "Type", "PortableApps.comFormat")
 	IniWrite($appinfopath, "Format", "Version", "3.0" & @CRLF)
 	IniWrite($appinfopath, "Details", "Name", $appnameportable)
@@ -183,12 +187,14 @@ Func CreateApp()
 		Exit
 	EndIf
 	MsgBox(0, $wintitle, "Appinfo.ini created.")
+
+
 	;Step 4. Collect launcher info from user.
 	#Region ### START Koda GUI section ### Form=D:\OneDrive\Documents\PortableApp_Creator Launcher.kxf
 	$_1 = GUICreate($wintitle, 505, 525, -1, -1)
 	$Manditory = GUICtrlCreateGroup("Manditory", 0, 0, 505, 41)
 	$ProgramExecutable = GUICtrlCreateLabel("ProgramExecutable", 8, 16, 96, 17)
-	$ProgramExecutableInput = GUICtrlCreateInput($appname & "\" & $appname & ".exe", 104, 14, 393, 21)
+	Global $ProgramExecutableInput = GUICtrlCreateInput($appname & "\" & $appname & ".exe", 104, 14, 393, 21)
 	$LaunchOptions = GUICtrlCreateGroup("Launch Options", 0, 40, 505, 145)
 	$ProgramExecutable64 = GUICtrlCreateLabel("ProgramExecutable64", 8, 56, 108, 17)
 	$ProgramExecutable64Input = GUICtrlCreateInput("", 120, 56, 377, 21)
@@ -221,17 +227,18 @@ Func CreateApp()
 		$nMsg = GUIGetMsg()
 		Switch $nMsg
 			Case $GUI_EVENT_CLOSE
-				Exit
+				Local $iexit = MsgBox(4, $wintitle, "Are you sure?")
+				If @error Then Exit
+				If $iexit = 6 Then Exit
 			Case $Submit
 				GUISetState(@SW_HIDE)
 				ExitLoop
 		EndSwitch
 	WEnd
+
+
 	;Step 5. Create launcher.ini
-	Local $ininametemp = StringSplit(GUICtrlRead($ProgramExecutableInput), "\")
-	Local $ininame = $ininametemp[$ininametemp[0]]
-	$ininame = StringReplace($ininame, ".exe", "")
-	Local $launcherinfopath = $path & $appname & "\App\AppInfo\Launcher\" & $ininame & " Portable.ini"
+	Global $launcherinfopath = $path & $appnameportable & "\App\AppInfo\Launcher\" & $appnameportable & ".ini"
 	IniWrite($launcherinfopath, "Launch", "Name", $appnameportable)
 	IniWrite($launcherinfopath, "Launch", "ProgramExecutable", GUICtrlRead($ProgramExecutableInput))
 	IniWrite($launcherinfopath, "Launch", "ProgramExecutable64", GUICtrlRead($ProgramExecutable64Input))
@@ -251,18 +258,34 @@ Func CreateApp()
 	EndIf
 	MsgBox(0, $wintitle, "Launcher.ini created. Press Ok to Extract the Icons.")
 	If @error Then Exit
-	ShellExecuteWait("iconsext.exe", "/save " & $path & $appname & "\App\" & GUICtrlRead($ProgramExecutableInput) & " " & $path & $appname & "\App\AppInfo" & " -icons -asico")
-	Do
-		Sleep(500)
-	Until FileExists($path & $appname & "\App\AppInfo\" & $appname & "_101.ico")
-	FileMove($path & $appname & "\App\AppInfo\" & $appname & "_101.ico", $path & $appname & "\App\AppInfo\appicon.ico", 1)
-	Do
-		Sleep(500)
-	Until FileExists($path & $appname & "\App\AppInfo\appicon.ico")
-	ShellExecuteWait($PortableAppsLauncherCreatorPath, $path & $appname)
-	Local $runpath = IniRead($appinfopath, "Control", "Start", "")
-	If FileExists($path & $appname & "\" & $runpath) Then MsgBox(0, $wintitle, "Success.")
+
+	GetIcon()
+	ShellExecuteWait($PortableAppsLauncherCreatorPath, $path & $appnameportable)
+	Global $runpath = IniRead($appinfopath, "Control", "Start", "")
+	If FileExists($path & $appnameportable & "\" & $runpath) Then MsgBox(0, $wintitle, "Success.")
 EndFunc   ;==>CreateApp
-
-
-
+Func GetIcon()
+	ShellExecuteWait(@ScriptDir & "iconsext.exe", '/save "' & $path & $appnameportable & '\App\' & GUICtrlRead($ProgramExecutableInput) & '" "' & $path & $appnameportable & '\App\AppInfo" -icons -asico')
+	Global $icoPath = StringSplit(GUICtrlRead($ProgramExecutableInput), "\|/")
+	$icoPath = StringTrimRight($icoPath[UBound($icoPath) - 1], 4)
+	Global $MoveCounter = 101
+	While 1
+		If FileExists($path & $appnameportable & "\App\AppInfo\" & $icoPath & "_" & $MoveCounter & ".ico") Then
+			If FileMove($path & $appnameportable & "\App\AppInfo\" & $icoPath & "_" & $MoveCounter & ".ico", $path & $appnameportable & "\App\AppInfo\appicon.ico", 1) = 1 Then ExitLoop
+		EndIf
+		$MoveCounter += 1
+		If $MoveCounter = 2 ^ 16 - 1 Then
+			ShellExecute($path & $appnameportable & "\App\AppInfo\")
+			$response = MsgBox(2, $wintitle, 'Could not rename "' & $path & $appnameportable & "\App\AppInfo\" & $icoPath & '_###.ico" to appicon.ico because icon extraction failed or could not be autodetected.' & @CRLF & @CRLF & 'If the icon file exists, please manually rename it to "appicon.ico" and then select Retry.')
+			Select
+				Case $response = 3 ;abort
+					Exit
+				Case $response = 4 ;retry
+					GetIcon()
+				Case $response = 5 ;ignore
+					ContinueCase
+			EndSelect
+			ExitLoop
+		EndIf
+	WEnd
+EndFunc   ;==>GetIcon
