@@ -1,8 +1,10 @@
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=C:\PortableApps\PortableApps.com\App\Graphics\usb_old.ico
 #AutoIt3Wrapper_Outfile=C:\PortableApps\PortableApps App Creation Wizard.exe
+#AutoIt3Wrapper_Compression=4
 #AutoIt3Wrapper_UseUpx=y
 #AutoIt3Wrapper_UseX64=n
+#AutoIt3Wrapper_Run_After=copy "%out%" %scriptdir%
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 #include "array.au3"
 #include <ButtonConstants.au3>
@@ -11,6 +13,7 @@
 #include <GUIConstantsEx.au3>
 #include <StaticConstants.au3>
 #include <WindowsConstants.au3>
+FileInstall("iconsext.exe","iconsext.exe",1)
 Global $path = StringTrimRight(@ScriptDir, StringLen(@ScriptDir) - 2) & "\PortableApps\"
 Global $PortableAppsLauncherCreatorPath = $path & "PortableApps.comLauncher\PortableApps.comLauncherGenerator.exe"
 Global Const $wintitle = "PortableApps App Creation Wizard"
