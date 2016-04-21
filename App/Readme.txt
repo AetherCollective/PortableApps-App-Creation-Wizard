@@ -1,0 +1,1 @@
+Just run the app and follow the instructions. Pretty simple, right?

@@ -1,0 +1,5 @@
+License
+
+This utility is released as freeware. You can freely use and distribute it. If you distribute this utility, you must include all files in the distribution package including the readme.txt, without any modification !
+
+Source: http://www.nirsoft.net/utils/iconsext.html
