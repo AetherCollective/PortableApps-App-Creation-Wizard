@@ -95,7 +95,7 @@ Func CreateApp()
 	GUICtrlSetState(-1, $GUI_CHECKED)
 	$CommercialUse = GUICtrlCreateCheckbox("Commercial Use", 240, 176, 97, 17)
 	$EulaVersion = GUICtrlCreateLabel("EULAVersion", 344, 176, 67, 17)
-	$EulaVersionInput = GUICtrlCreateInput("1", 416, 174, 81, 21)
+	$EulaVersionInput = GUICtrlCreateInput("", 416, 174, 81, 21)
 	$Group3 = GUICtrlCreateGroup("Version", 0, 200, 505, 41)
 	$PackageVersionInput = GUICtrlCreateInput("1.0.0.0", 92, 214, 161, 21)
 	$DisplayVersionInput = GUICtrlCreateInput("1.0", 336, 214, 161, 21)
@@ -220,7 +220,7 @@ Func CreateApp()
 	$DirectoryMove = GUICtrlCreateGroup("DirectoryMove", 0, 322, 505, 81)
 	$DirectoryMoveInput = GUICtrlCreateEdit("", 0, 338, 505, 73)
 	GUICtrlSetData(-1, "")
-	$RegistryMove = GUICtrlCreateGroup("RegistryMove", 0, 412, 505, 81)
+	$RegistryMove = GUICtrlCreateGroup("RegistryMove (RegistryKeys)", 0, 412, 505, 81)
 	$RegistryMoveInput = GUICtrlCreateEdit("", 0, 428, 505, 73)
 	GUICtrlSetData(-1, "")
 	$Submit = GUICtrlCreateButton("Submit", 0, 502, 505, 22)
@@ -269,26 +269,6 @@ Func CreateApp()
 EndFunc   ;==>CreateApp
 Func GetIcon()
 	ShellExecuteWait(@ScriptDir & "\iconsext.exe", '/save "' & $path & $appnameportable & '\App\' & GUICtrlRead($ProgramExecutableInput) & '" "' & $path & $appnameportable & '\App\AppInfo" -icons -asico')
-	Global $icoPath = StringSplit(GUICtrlRead($ProgramExecutableInput), "\|/")
-	$icoPath = StringTrimRight($icoPath[UBound($icoPath) - 1], 4)
-	Global $MoveCounter = 101
-	While 1
-		If FileExists($path & $appnameportable & "\App\AppInfo\" & $icoPath & "_" & $MoveCounter & ".ico") Then
-			If FileMove($path & $appnameportable & "\App\AppInfo\" & $icoPath & "_" & $MoveCounter & ".ico", $path & $appnameportable & "\App\AppInfo\appicon.ico", 1) = 1 Then ExitLoop
-		EndIf
-		$MoveCounter += 1
-		If $MoveCounter = 2 ^ 16 - 1 Then
-			ShellExecute($path & $appnameportable & "\App\AppInfo\")
-			$response = MsgBox(2, $wintitle, 'Could not rename "' & $path & $appnameportable & "\App\AppInfo\" & $icoPath & '_###.ico" to appicon.ico because icon extraction failed or could not be autodetected.' & @CRLF & @CRLF & 'If the icon file exists, please manually rename it to "appicon.ico" and then select Retry.')
-			Select
-				Case $response = 3 ;abort
-					Exit
-				Case $response = 4 ;retry
-					GetIcon()
-				Case $response = 5 ;ignore
-					ContinueCase
-			EndSelect
-			ExitLoop
-		EndIf
-	WEnd
+	$sIcon=FileOpenDialog($wintitle&" - Select the Icon you wish to use.",$path & $appnameportable & '\App\Appinfo\',"Icon files (*.ico)",1)
+	FileCopy($sIcon,$path & $appnameportable & '\App\AppInfo\appicon.ico',1)
 EndFunc   ;==>GetIcon
