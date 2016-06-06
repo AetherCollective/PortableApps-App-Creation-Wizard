@@ -269,6 +269,10 @@ Func CreateApp()
 EndFunc   ;==>CreateApp
 Func GetIcon()
 	ShellExecuteWait(@ScriptDir & "\iconsext.exe", '/save "' & $path & $appnameportable & '\App\' & GUICtrlRead($ProgramExecutableInput) & '" "' & $path & $appnameportable & '\App\AppInfo" -icons -asico')
+	do
 	$sIcon=FileOpenDialog($wintitle&" - Select the Icon you wish to use.",$path & $appnameportable & '\App\Appinfo\',"Icon files (*.ico)",1)
+	if @error then $msgResult=MsgBox(64+4,$wintitle,"Cannot continue without selecting an icon. Would you like to try again?")
+		if $msgResult = 7 then Exit
+	until $sIcon <> ""
 	FileCopy($sIcon,$path & $appnameportable & '\App\AppInfo\appicon.ico',1)
 EndFunc   ;==>GetIcon
