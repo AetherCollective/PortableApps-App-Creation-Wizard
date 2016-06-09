@@ -57,7 +57,7 @@ Func CreateApp()
 	DirCreate($path & $appnameportable & "\Other\Help\Images")
 	DirCreate($path & $appnameportable & "\Other\Source\")
 	MsgBox(0, $wintitle, "Project Folders Created. Please move the PortableApp into the Project Folder at " & @CRLF & $path & $appnameportable & "\App\" & $appname & @CRLF & @CRLF & "An icon will be extracted automatically if the ProgramExecutable exists upon submission. Otherwise, you will also want to make/extract the icon at this time. ")
-
+	ShellExecute($path & $appnameportable & "\App\" & $appname,"","","open")
 
 	;Step 2. Collect appinfo from user.
 	#Region ### START Koda GUI section ### Form=D:\OneDrive\Documents\PortableApp_Creator.kxf
@@ -265,7 +265,12 @@ Func CreateApp()
 	GetIcon()
 	ShellExecuteWait($PortableAppsLauncherCreatorPath, $path & $appnameportable)
 	Global $runpath = IniRead($appinfopath, "Control", "Start", "")
-	If FileExists($path & $appnameportable & "\" & $runpath) Then MsgBox(0, $wintitle, "Success.")
+	If FileExists($path & $appnameportable & "\" & $runpath) Then 
+		MsgBox(0, $wintitle, "Success.")
+		Else
+		MsgBox(0, $wintitle, "Something went wrong. Click OK to check the log.")	
+		ShellExecute($path & "PortableApps.comLauncher\Data\PortableApps.comLauncherGeneratorLog.txt")
+	EndIf
 EndFunc   ;==>CreateApp
 Func GetIcon()
 	ShellExecuteWait(@ScriptDir & "\iconsext.exe", '/save "' & $path & $appnameportable & '\App\' & GUICtrlRead($ProgramExecutableInput) & '" "' & $path & $appnameportable & '\App\AppInfo" -icons -asico')
