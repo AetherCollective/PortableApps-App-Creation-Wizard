@@ -12,9 +12,9 @@
 #include <StaticConstants.au3>
 #include <WindowsConstants.au3>
 Global Const $wintitle = "PortableApps App Creation Wizard"
-Global $path = @ScriptDir&"\..\..\..\"
+Global $path = @ScriptDir & "\..\..\..\"
 FileChangeDir($path)
-$path=@WorkingDir&"\"
+$path = @WorkingDir & "\"
 Global $PortableAppsLauncherCreatorPath = $path & "PortableApps.comLauncher\PortableApps.comLauncherGenerator.exe"
 CheckGenerator()
 Func CheckGenerator()
@@ -209,7 +209,7 @@ Func CreateApp()
 	$CommandLineArguments = GUICtrlCreateLabel("CommandLineArguments", 8, 132, 121, 17)
 	$CommandLineArgumentsInput = GUICtrlCreateInput("", 136, 132, 361, 21)
 	$WorkingDirectory = GUICtrlCreateLabel("WorkingDirectory", 8, 160, 86, 17)
-	$WorkingDirectoryInput = GUICtrlCreateInput("%PAL:AppDir%\"&$appname, 104, 160, 393, 21)
+	$WorkingDirectoryInput = GUICtrlCreateInput("%PAL:AppDir%\" & $appname, 104, 160, 393, 21)
 	$Group1 = GUICtrlCreateGroup("Group1", 0, 184, 481, 1)
 	$RunAsAdmin = GUICtrlCreateGroup("RunAsAdmin", 0, 184, 505, 49)
 	$RunAsAdminCombo = GUICtrlCreateCombo("None", 8, 200, 489, 25, BitOR($CBS_DROPDOWN, $CBS_AUTOHSCROLL))
@@ -269,10 +269,12 @@ Func CreateApp()
 EndFunc   ;==>CreateApp
 Func GetIcon()
 	ShellExecuteWait(@ScriptDir & "\iconsext.exe", '/save "' & $path & $appnameportable & '\App\' & GUICtrlRead($ProgramExecutableInput) & '" "' & $path & $appnameportable & '\App\AppInfo" -icons -asico')
-	do
-	$sIcon=FileOpenDialog($wintitle&" - Select the Icon you wish to use.",$path & $appnameportable & '\App\Appinfo\',"Icon files (*.ico)",1)
-	if @error then $msgResult=MsgBox(64+4,$wintitle,"Cannot continue without selecting an icon. Would you like to try again?")
-		if $msgResult = 7 then Exit
-	until $sIcon <> ""
-	FileCopy($sIcon,$path & $appnameportable & '\App\AppInfo\appicon.ico',1)
+	Do
+		$sIcon = FileOpenDialog($wintitle & " - Select the Icon you wish to use.", $path & $appnameportable & '\App\Appinfo\', "Icon files (*.ico)", 1)
+		If @error Then
+			$msgResult = MsgBox(64 + 4, $wintitle, "Cannot continue without selecting an icon. Would you like to try again?")
+			If $msgResult = 7 Then Exit
+		EndIf
+	Until $sIcon <> ""
+	FileCopy($sIcon, $path & $appnameportable & '\App\AppInfo\appicon.ico', 1)
 EndFunc   ;==>GetIcon
