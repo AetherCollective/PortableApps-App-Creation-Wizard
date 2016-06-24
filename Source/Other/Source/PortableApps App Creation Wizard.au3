@@ -56,6 +56,7 @@ Func CreateApp()
 	DirCreate($path & $appnameportable & "\Other\Help")
 	DirCreate($path & $appnameportable & "\Other\Help\Images")
 	DirCreate($path & $appnameportable & "\Other\Source\")
+	FileWrite($path & $appnameportable & "\help.html", "")
 	MsgBox(0, $wintitle, "Project Folders Created. Please move the PortableApp into the Project Folder at " & @CRLF & $path & $appnameportable & "\App\" & $appname & @CRLF & @CRLF & "An icon will be extracted automatically if the ProgramExecutable exists upon submission. Otherwise, you will also want to make/extract the icon at this time. ")
 	ShellExecute($path & $appnameportable & "\App\" & $appname, "", "", "open")
 
@@ -189,6 +190,9 @@ Func CreateApp()
 		MsgBox(0, $wintitle, "Unable to create or modify appinfo.ini. Please rerun as admin.")
 		Exit
 	EndIf
+	IniWrite($appinfopath, "Version", "PackageVersion", GUICtrlRead($PackageVersionInput))
+	IniWrite($appinfopath, "Version", "DisplayVersion", GUICtrlRead($DisplayVersionInput))
+	
 	MsgBox(0, $wintitle, "Appinfo.ini created.")
 
 
